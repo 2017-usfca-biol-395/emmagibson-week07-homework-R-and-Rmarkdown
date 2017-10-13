@@ -17,7 +17,7 @@ The original samples were obtained from human volunteers and the keyboards/mice 
 
 ## Computational
 
-The sequence data was analyzed using a combination of bash and R. First, the quality of each sequence was analyzed in bash using bioawk. After the sequenceswere revealed to be of good quality, a bash script was used to search the NCBI databank for the closest species matches, and document the results. After the bash analysis, several R analyses were used to determine the relatinoships of the various species. 
+The sequence data was analyzed using a combination of bash and R. First, the quality of each sequence was analyzed in bash using bioawk. After the sequenceswere revealed to be of good quality, a bash script was used to search the NCBI databank for the closest species matches, and document the results. After the bash analysis, several R analyses were used to determine the relatinoships of the various species. The relationship of subject's sex to their skin microbes was of particular interest.
 
 # Results
 The following libraries were used:
@@ -121,7 +121,7 @@ joined_blast_data_metadata <- metadata_in %>%
             by = c("Run_s" = "sample_name"))
 ```
 
-
+Next, I analyzed what percent identity was most common for the BLAST results.
 ```{r histograms}
 # Here we're using the dply piping syntax to select a subset of rows matching a
 # criteria we specify (using the filter) function, and then pull out a column
@@ -235,7 +235,7 @@ mf_in_common %>%
 
 I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were Solemya pervernicosa gill symbiont.
 
-```{r 86% percent identity}
+```{r 86 percent identity}
 # this code finds samples with a percent identity between 85 snd 87, then finds what species and how many of each have a percent identity within thid range
 joined_blast_data_metadata %>%
   filter(pident > 85 & pident < 87) %>% 
@@ -250,54 +250,6 @@ joined_blast_data_metadata %>%
   ggtitle("Most common species with 85-87% identity match") + 
   xlab("Species name") + 
   ylab("Number of sequences with 85-87% identity match")
-
-```
-
-```{r summarize-length}
-#this code makes finds longest sequences on male and female hands
-joined_blast_data_metadata %>%
-  group_by(sscinames, sex_s) %>%
-  summarize(mean_seq_length = mean(length)) %>%
-  arrange(desc(mean_seq_length)) %>%
-  head(20) %>%
-  kable()
-
-```
-
-
-```{r ggplot intro}
-
-ggplot(joined_blast_data_metadata,
-       aes(x = sex_s,
-           y = length)) + 
-  geom_jitter(aes(alpha = pident,
-                  color = sample_type_s))
-  # geom_boxplot()
-  # geom_violin()
-
-joined_blast_data_metadata %>%
-  filter(env_material_s == "sebum") %>%
-  group_by(sscinames, sex_s) %>%
-  count() %>%
-  arrange(desc(n)) %>%
-  head(15) %>%
-  ggplot(aes(x = sscinames,
-             y = n,
-             fill = sex_s)) + 
-  geom_bar(stat = "Identity",
-           position = "Dodge") +
-  theme(axis.text.x=element_text(angle=46,hjust=1)) +
-  ggtitle("Most common species in male and/or female hands") + 
-  xlab("Species name") + 
-  ylab("Number of Sample Found")
-   
-
-
-ggplot(joined_blast_data_metadata, aes(x = length,
-                                       fill = sample_type_s)) + 
-  geom_histogram() 
-  facet_wrap(~host_subject_id_s)
-
 
 ```
 
