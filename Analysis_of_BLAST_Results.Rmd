@@ -1,7 +1,7 @@
 ---
 title: "Analysis of BLAST Results"
-author: "Don Francisco"
-date: "October 6, 2017"
+author: "Emma Gibson"
+date: "October 13, 2017"
 output: github_document
 ---
 
@@ -144,7 +144,7 @@ joined_blast_data_metadata %>%
   group_by(sscinames) %>%
   count() %>%
   arrange(desc(n)) %>%
-  head(5) %>%
+  head(10) %>%
   ggplot(aes(x = sscinames, y = n)) + 
   geom_bar(stat = "Identity", fill = "tomato1") + 
   theme(axis.text.x=element_text(angle=10,hjust=1)) + 
@@ -161,7 +161,7 @@ joined_blast_data_metadata %>%
   group_by(sscinames) %>%
   count() %>%
   arrange(desc(n)) %>%
-  head(5) %>%
+  head(10) %>%
   ggplot(aes(x = sscinames, 
              y = n)) + 
   geom_bar(stat = "Identity", fill = "turquoise3") + 
@@ -265,5 +265,6 @@ kable(table(joined_blast_data_metadata$sscinames,
 
 # Discussion
 
-Add 2-3 paragraphs here interpreting your results and considering future directions one might take in analyzing these data.
+There appears to be a difference between the most prominent species in male and female hands. Strangely, the most prominent species on male hande was a gill symbiote of the clam species *Solemya permicosa*, whuch seems an odd thing to find on human hands. On female hands, the most common bacterium was *Bartonella washoensis*, a pathogen known to cause memingitis, which makes a little more sense. After seeing the great differences between male and female hands, I decided to look for what was the most similar between them. Most of these bacteria that were found in similar levels among the sexes were typical bacteria one might expect to see on a human hand, such as soil bacteria. However, what stands out about these bacteria is that there is significantly less of them than any of the major groups found in either sex. Even the most prominent of these has only around 15 individuals in female hands and 25 in male hands. This reinforces the idea that the microbial communities on a person'shands are highly individualized, because the none of the species that are common amongst both sexes are very prominent overall.
 
+On a somewhat related note, when I looked at the initial percent identity chart, I noticed that there seemed to be a large number of species with around 86% match. When I looked into this, I noticed that there was one species that an overwhelming amount of these matches belonged to the *S. permicosa* gill symbiote, which also happened to be the most common match on male hands. While I thought that it was odd for a clam-associated bacterium to be on human hands, seeing that most of them had a relatively low match percentage compared to most of the other matches indictes that they could have been a mismatched species. It is quite possible that the actual bacterium on these subject's hands simply has not been sequenced yet.
