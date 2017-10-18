@@ -214,7 +214,8 @@ joined_blast_data_metadata %>%
 Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. I found that of these species, none was found more than 25 times on any one gender's hands.
 
 ``` r
-# this code makesa graph that shows the speceis whose presence is most similar between the sexes
+# this code makesa graph that shows the speceis whose presence is
+# most similar between the sexes
 # these first lines create a factor that has only male and female BLAST results
 mf_in_common <- joined_blast_data_metadata %>%
   filter(env_material_s == "sebum") %>%
@@ -222,7 +223,8 @@ mf_in_common <- joined_blast_data_metadata %>%
   count() %>%
   spread(sex_s, n)
 
-# these second lines find which species are the most similar among the sexes, and graphs the 10 most abundant species from the 30 most similar species
+# these second lines find which species are the most similar among the sexes, 
+# and graphs the 10 most abundant species from the 30 most similar species
 mf_in_common %>%
   mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
          m_pcnt = male / sum(mf_in_common$male, na.rm = TRUE)) %>%
@@ -242,7 +244,7 @@ mf_in_common %>%
              fill = gender)) +
   geom_bar(stat = "Identity",
            position = "dodge") +
-  theme(axis.text.x = element_text (angle = 75, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
   ggtitle("Most common speceis among male and female hands") +
   xlab("Species name") +
   ylab("Number of species found")
@@ -253,7 +255,8 @@ mf_in_common %>%
 I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were Solemya pervernicosa gill symbiont.
 
 ``` r
-# this code finds samples with a percent identity between 85 snd 87, then finds what species and how many of each have a percent identity within thid range
+# this code finds samples with a percent identity between 85 snd 87,
+# then finds what species and how many of each have a percent identity within thid range
 joined_blast_data_metadata %>%
   filter(pident > 85 & pident < 87) %>%
   select(sscinames) %>%
