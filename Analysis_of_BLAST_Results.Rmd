@@ -145,11 +145,11 @@ joined_blast_data_metadata %>%
   count() %>%
   arrange(desc(n)) %>%
   head(10) %>%
-  ggplot(aes(x = sscinames, y = n)) + 
-  geom_bar(stat = "Identity", fill = "tomato1") + 
-  theme(axis.text.x=element_text(angle=10,hjust=1)) + 
-  ggtitle("Most common species in female hands") + 
-  xlab("Species name") + 
+  ggplot(aes(x = sscinames, y = n)) +
+  geom_bar(stat = "Identity", fill = "tomato1") +
+  theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
+  ggtitle("Most common species in female hands") +
+  xlab("Species name") +
   ylab("Number of Sample Found")
 ```
 
@@ -162,12 +162,12 @@ joined_blast_data_metadata %>%
   count() %>%
   arrange(desc(n)) %>%
   head(10) %>%
-  ggplot(aes(x = sscinames, 
-             y = n)) + 
-  geom_bar(stat = "Identity", fill = "turquoise3") + 
-  theme(axis.text.x=element_text(angle=10,hjust=1)) + 
-  ggtitle("Most common species in male hands") + 
-  xlab("Species name") + 
+  ggplot(aes(x = sscinames,
+             y = n)) +
+  geom_bar(stat = "Identity", fill = "turquoise3") +
+  theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
+  ggtitle("Most common species in male hands") +
+  xlab("Species name") +
   ylab("Number of Sample Found")
 
 ```
@@ -183,12 +183,12 @@ joined_blast_data_metadata %>%
   head(15) %>%
   ggplot(aes(x = sscinames,
              y = n,
-             fill = sex_s)) + 
+             fill = sex_s)) +
   geom_bar(stat = "Identity",
            position = "Dodge") +
-  theme(axis.text.x=element_text(angle=46,hjust=1)) +
-  ggtitle("Most common species in male and/or female hands") + 
-  xlab("Species name") + 
+  theme(axis.text.x = element_text(angle = 46, hjust = 1)) +
+  ggtitle("Most common species in male and/or female hands") +
+  xlab("Species name") +
   ylab("Number of Sample Found")
    
 
@@ -202,12 +202,12 @@ mf_in_common <- joined_blast_data_metadata %>%
   filter(env_material_s == "sebum") %>%
   group_by(sscinames, sex_s) %>%
   count() %>%
-  spread(sex_s, n) 
+  spread(sex_s, n)
 
 # these second lines find which species are the most similar among the sexes, and graphs the 10 most abundant species from the 30 most similar species
 mf_in_common %>%
-  mutate(f_pcnt = female/sum(mf_in_common$female, na.rm = TRUE), 
-         m_pcnt = male/sum(mf_in_common$male, na.rm = TRUE)) %>%
+  mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
+         m_pcnt = male / sum(mf_in_common$male, na.rm = TRUE)) %>%
   mutate(f_pcnt = ifelse(is.na(f_pcnt), 0, f_pcnt),
          m_pcnt = ifelse(is.na(m_pcnt), 0, m_pcnt)) %>%
   mutate(diff = abs(f_pcnt - m_pcnt)) %>%
@@ -216,17 +216,17 @@ mf_in_common %>%
   head(30) %>%
   arrange(diff) %>%
   head(10) %>%
-  gather(key = "gender", 
+  gather(key = "gender",
          value = "n",
          female, male) %>%
-  ggplot(aes(x = sscinames, 
+  ggplot(aes(x = sscinames,
              y = n,
              fill = gender)) +
-  geom_bar(stat = "Identity", 
+  geom_bar(stat = "Identity",
            position = "dodge") +
-  theme(axis.text.x=element_text(angle=75,hjust=1)) + 
-  ggtitle("Most common speceis among male and female hands") + 
-  xlab("Species name") + 
+  theme(axis.text.x = element_text (angle = 75, hjust = 1)) +
+  ggtitle("Most common speceis among male and female hands") +
+  xlab("Species name") +
   ylab("Number of species found")
 
 ```
@@ -238,17 +238,17 @@ I found that there are a large number of sequences with around 86 percent identi
 ```{r 86 percent identity}
 # this code finds samples with a percent identity between 85 snd 87, then finds what species and how many of each have a percent identity within thid range
 joined_blast_data_metadata %>%
-  filter(pident > 85 & pident < 87) %>% 
+  filter(pident > 85 & pident < 87) %>%
   select(sscinames) %>%
   group_by(sscinames) %>%
   count() %>%
   arrange(desc(n)) %>%
   head(5) %>%
-  ggplot(aes(x = sscinames, y = n)) + 
-  geom_bar(stat = "Identity") + 
-  theme(axis.text.x=element_text(angle=10,hjust=1)) + 
-  ggtitle("Most common species with 85-87% identity match") + 
-  xlab("Species name") + 
+  ggplot(aes(x = sscinames, y = n)) +
+  geom_bar(stat = "Identity") +
+  theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
+  ggtitle("Most common species with 85-87% identity match") +
+  xlab("Species name") +
   ylab("Number of sequences with 85-87% identity match")
 
 ```
