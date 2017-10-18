@@ -224,7 +224,7 @@ mf_in_common <- joined_blast_data_metadata %>%
   spread(sex_s, n)
 
 # these second lines find which species are the most
-# similar among the sexes, and graphs the 10 most 
+# similar among the sexes, and graphs the 10 most
 # abundant species from the 30 most similar species
 mf_in_common %>%
   mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
@@ -257,7 +257,7 @@ I found that there are a large number of sequences with around 86 percent identi
 
 ``` r
 # this code finds samples with a percent identity between 85 snd 87,
-# then finds what species and how many of each have a percent 
+# then finds what species and how many of each have a percent
 # identity within this range
 joined_blast_data_metadata %>%
   filter(pident > 85 & pident < 87) %>%
