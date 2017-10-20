@@ -6,7 +6,7 @@ October 13, 2017
 Introduction
 ============
 
-As recent advancements in gene sequencing technology make studying microbiomes more and more accesible, studies of the human microbiomes have shown that they can vary widely from person to person. In this study, Fierer *et al.* focused on microbial communities living on peoples' skin. They were able to prove that miceobes from a person's skin can remain on an object they have touched for up to two weeks, and sequences from these microbes can be used to accurately match which person has touched a given object. Whereas the original authors focused on using skin microbes for forensic analysis, I focused on investigating what these unique communities could tell me about the individuals they came from.
+As recent advancements in gene sequencing technology make studying microbiomes more and more accessible, studies of the human microbiomes have shown that they can vary widely from person to person. In this study, Fierer *et al.* focused on microbial communities living on peoples' skin. They were able to prove that microbes from a person's skin can remain on an object they have touched for up to two weeks, and sequences from these microbes can be used to accurately match which person has touched a given object. Whereas the original authors focused on using skin microbes for forensic analysis, I focused on investigating what these unique communities could tell me about the individuals they came from.
 
 Methods
 =======
@@ -14,12 +14,12 @@ Methods
 Sample origin and sequencing
 ----------------------------
 
-The original samples were obtained from human volunteers and the keyboards/mice they touched, and collected with asterilized cotton-tipped swab that had been moistened by a sterile solution. The hands were swabbed at midday, and the mice and keyboards were swabbed within 12 hours of bein used by their respective owners. The sequences were obtained using high-throughput pyrosequencing of the 16S ribosomal gene.
+The original samples were obtained from human volunteers and the keyboards/mice they touched, and collected with sterilized cotton-tipped swab that had been moistened by a sterile solution. The hands were swabbed at midday, and the mice and keyboards were swabbed within 12 hours of being used by their respective owners. The sequences were obtained using high-throughput pyrosequencing of the 16S ribosomal gene.
 
 Computational
 -------------
 
-The sequence data was analyzed using a combination of bash and R. First, the quality of each sequence was analyzed in bash using bioawk. After the sequenceswere revealed to be of good quality, a bash script was used to search the NCBI databank for the closest species matches, and document the results. After the bash analysis, several R analyses were used to determine the relatinoships of the various species. The relationship of subject's sex to their skin microbes was of particular interest.
+The sequence data was analyzed using a combination of bash and R. First, the quality of each sequence was analyzed in bash using bioawk. After the sequences were revealed to be of good quality, a bash script was used to search the NCBI database for the closest species matches, and document the results. After the bash analysis, several R analyses were used to determine the relationships of the various species. The relationship of subject's sex to their skin microbes was of particular interest.
 
 Results
 =======
@@ -296,16 +296,46 @@ mf_in_common %>%
   geom_bar(stat = "Identity",
            position = "dodge") +
   theme(axis.text.x = element_text(angle = -20, hjust = 0.05)) +
-  ggtitle("Most common species (by total) among male and female hands") +
+  ggtitle("A. Most common species (by total) among male and female hands") +
   xlab("Species name") +
   ylab("Number of species found")
 ```
 
-![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/common%20between%20sexes-1.png) Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. I found that of these species, none was found more than 25 times on any one gender's hands.
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/common%20between%20sexes-1.png)
+
+``` r
+# also decided to make a third graph that determines the 30
+# most common species by percent makeup, rather than total abundance
+mf_in_common %>%
+  mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
+         m_pcnt = male / sum(mf_in_common$male, na.rm = TRUE)) %>%
+  mutate(f_pcnt = ifelse(is.na(f_pcnt), 0, f_pcnt),
+         m_pcnt = ifelse(is.na(m_pcnt), 0, m_pcnt)) %>%
+  mutate(diff = abs(f_pcnt - m_pcnt)) %>%
+  mutate(m_f = female + male, mf_pcnt = m_pcnt + f_pcnt) %>%
+  arrange(desc(mf_pcnt)) %>%
+  head(30) %>%
+  arrange(diff) %>%
+  head(10) %>%
+  gather(key = "gender",
+         value = "n",
+         female, male) %>%
+  ggplot(aes(x = sscinames,
+             y = n,
+             fill = gender)) +
+  geom_bar(stat = "Identity",
+           position = "dodge") +
+  theme(axis.text.x = element_text(angle = -20, hjust = 0.04)) +
+  ggtitle("B. Most common species (by percent)among male and female hands") +
+  xlab("Species name") +
+  ylab("Number of species found")
+```
+
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/common%20between%20sexes-2.png) Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. Figure 6A determined the most prominent species using overall count in both sexes, whereas Figure 6B determined the most prominent species using the percent makeup each species has across both sexes.
 
 Discussion
 ==========
 
-There appears to be a difference between the most prominent species in male and female hands. Strangely, the most prominent species on male hande was a gill symbiote of the clam species *Solemya permicosa*, whuch seems an odd thing to find on human hands. On female hands, the most common bacterium was *Bartonella washoensis*, a pathogen known to cause memingitis, which makes a little more sense. After seeing the great differences between male and female hands, I decided to look for what was the most similar between them. Most of these bacteria that were found in similar levels among the sexes were typical bacteria one might expect to see on a human hand, such as soil bacteria. However, what stands out about these bacteria is that there is significantly less of them than any of the major groups found in either sex. Even the most prominent of these has only around 15 individuals in female hands and 25 in male hands. This reinforces the idea that the microbial communities on a person'shands are highly individualized, because the none of the species that are common amongst both sexes are very prominent overall.
+There appears to be a difference between the most prominent species in male and female hands. Strangely, the most prominent species on male hand was a gill symbiont of the clam species *Solemya permicosa*, which seems an odd thing to find on human hands. On female hands, the most common bacterium was *Bartonella washoensis*, a pathogen known to cause meningitis, which makes a little more sense. After seeing the great differences between male and female hands, I decided to look for what was the most similar between them. Most of these bacteria that were found in similar levels among the sexes were typical bacteria one might expect to see on a human hand, such as soil bacteria. However, what stands out about these bacteria is that there is significantly less of them than any of the major groups found in either sex. Even the most prominent of these has less than 80 individual present in both male and female hands. This reinforces the idea that the microbial communities on a person's hands are highly individualized, because the none of the species that are common among both sexes are very prominent overall.
 
-On a somewhat related note, when I looked at the initial percent identity chart, I noticed that there seemed to be a large number of species with around 86% match. When I looked into this, I noticed that there was one species that an overwhelming amount of these matches belonged to the *S. permicosa* gill symbiote, which also happened to be the most common match on male hands. While I thought that it was odd for a clam-associated bacterium to be on human hands, seeing that most of them had a relatively low match percentage compared to most of the other matches indictes that they could have been a mismatched species. It is quite possible that the actual bacterium on these subject's hands simply has not been sequenced yet.
+On a somewhat related note, when I looked at the initial percent identity chart, I noticed that there seemed to be a large number of species with around 86% match. When I looked into this, I noticed that there was one species that an overwhelming amount of these matches belonged to the *S. permicosa* gill symbiont, which also happened to be the most common match on male hands. While I thought that it was odd for a clam-associated bacterium to be on human hands, seeing that most of them had a relatively low match percentage compared to most of the other matches indicates that they could have been a mismatched species. It is quite possible that the actual bacterium on these subject's hands simply has not been sequenced yet.
