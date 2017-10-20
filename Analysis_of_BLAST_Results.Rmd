@@ -210,7 +210,7 @@ joined_blast_data_metadata %>%
              fill = sex_s)) +
   geom_bar(stat = "Identity",
            position = "Dodge") +
-  theme(axis.text.x = element_text(angle = 46, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = -45, hjust = 0.05)) +
   ggtitle("Most common species in male and/or female hands") +
   xlab("Species name") +
   ylab("Number of Sample Found")
@@ -239,7 +239,7 @@ mf_in_common %>%
 # makes up. Using the raw totals would throw off the
 # analysis, because there was a different total of
 # sequences in male vs female hands
-    mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
+  mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
          m_pcnt = male / sum(mf_in_common$male, na.rm = TRUE)) %>%
 # next, we change all of the blank slots where one
 # of the sexes had no sequences from a blank to a 0
@@ -262,8 +262,8 @@ mf_in_common %>%
              fill = gender)) +
   geom_bar(stat = "Identity",
            position = "dodge") +
-  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
-  ggtitle("Most common speceis among male and female hands") +
+  theme(axis.text.x = element_text(angle = -20, hjust = 0.05)) +
+  ggtitle("Most common species (by total) among male and female hands") +
   xlab("Species name") +
   ylab("Number of species found")
 

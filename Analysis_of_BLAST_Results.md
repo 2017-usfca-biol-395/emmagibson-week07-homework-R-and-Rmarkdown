@@ -243,7 +243,7 @@ joined_blast_data_metadata %>%
              fill = sex_s)) +
   geom_bar(stat = "Identity",
            position = "Dodge") +
-  theme(axis.text.x = element_text(angle = 46, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = -45, hjust = 0.05)) +
   ggtitle("Most common species in male and/or female hands") +
   xlab("Species name") +
   ylab("Number of Sample Found")
@@ -267,10 +267,20 @@ mf_in_common <- joined_blast_data_metadata %>%
 # similar among the sexes, and graphs the 10 most
 # abundant species from the 30 most similar species
 mf_in_common %>%
+# first, we make 2 new columns with the percent of
+# total matches in male/female hands each species
+# makes up. Using the raw totals would throw off the
+# analysis, because there was a different total of
+# sequences in male vs female hands
   mutate(f_pcnt = female / sum(mf_in_common$female, na.rm = TRUE),
          m_pcnt = male / sum(mf_in_common$male, na.rm = TRUE)) %>%
+# next, we change all of the blank slots where one
+# of the sexes had no sequences from a blank to a 0
   mutate(f_pcnt = ifelse(is.na(f_pcnt), 0, f_pcnt),
          m_pcnt = ifelse(is.na(m_pcnt), 0, m_pcnt)) %>%
+# then, we find the absolute value of the difference
+# between the two percent values, so we can find which
+# species have the smallest difference
   mutate(diff = abs(f_pcnt - m_pcnt)) %>%
   mutate(m_f = female + male, mf_pcnt = m_pcnt + f_pcnt) %>%
   arrange(desc(m_f)) %>%
@@ -285,8 +295,8 @@ mf_in_common %>%
              fill = gender)) +
   geom_bar(stat = "Identity",
            position = "dodge") +
-  theme(axis.text.x = element_text(angle = 75, hjust = 1)) +
-  ggtitle("Most common speceis among male and female hands") +
+  theme(axis.text.x = element_text(angle = -20, hjust = 0.05)) +
+  ggtitle("Most common species (by total) among male and female hands") +
   xlab("Species name") +
   ylab("Number of species found")
 ```
