@@ -121,7 +121,7 @@ joined_blast_data_metadata <- metadata_in %>%
             by = c("Run_s" = "sample_name"))
 ```
 
-Next, I analyzed what percent identity was most common for the BLAST results.
+####Figure 1. Percent identity in human hand-associated bacteria
 ```{r histograms}
 # Here we're using the dply piping syntax to select a subset of rows matching a
 # criteria we specify (using the filter) function, and then pull out a column
@@ -134,9 +134,31 @@ joined_blast_data_metadata %>%
   hist(main = "Percent Identity",
        xlab = "Percent")
 ```
+Here, I analyzed what percent identity was most common for the BLAST results.
 
+####Figure 2. Most common species with ~86% identity match
+```{r 86 percent identity}
+# this code finds samples with a percent identity between 85 snd 87,
+# then finds what species and how many of each have a percent
+# identity within this range
+joined_blast_data_metadata %>%
+  filter(pident > 85 & pident < 87) %>%
+  select(sscinames) %>%
+  group_by(sscinames) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  head(5) %>%
+  ggplot(aes(x = sscinames, y = n)) +
+  geom_bar(stat = "Identity") +
+  theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
+  ggtitle("Most common species with 85-87% identity match") +
+  xlab("Species name") +
+  ylab("Number of sequences with 85-87% identity match")
 
-After this, I decided to look at what the most common species was for female test subjects only.
+```
+I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were *Solemya pervernicosa* gill symbiont.
+
+####Figure 3. Prominent species on female hands
 ```{r female hands}
 # this code identifies the most common species in female hands
 joined_blast_data_metadata %>%
@@ -150,10 +172,11 @@ joined_blast_data_metadata %>%
   theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
   ggtitle("Most common species in female hands") +
   xlab("Species name") +
-  ylab("Number of Sample Found")
+  ylab("Number of Samples Found")
 ```
+After this, I decided to look at what the most common species was for female test subjects only.
 
-Next, I did the same for male hands, looking for the most prominent species.
+####Figure 4. Prominent species on male hands
 ```{r male hands}
 # this code identifies the most common species in male hands
 joined_blast_data_metadata %>%
@@ -171,8 +194,9 @@ joined_blast_data_metadata %>%
   ylab("Number of Sample Found")
 
 ```
+Next, I did the same for male hands, looking for the most prominent species.
 
-Next, I looked at what species were most prominent among each sex, and found there was little overlap between what was common to one and what was common to another.
+####Figure 5. Most prominent species in male and female hands
 ```{r most common by sex}
 # this code ceates a graph to show the most common species among the sexes
 joined_blast_data_metadata %>%
@@ -193,8 +217,9 @@ joined_blast_data_metadata %>%
    
 
 ```
+Next, I looked at what species were most prominent among each sex, and found there was little overlap between what was common to one and what was common to another.
 
-Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. I found that of these species, none was found more than 25 times on any one gender's hands.
+###Figure 6. Most prominent species with little differences between each sex
 ```{r common between sexes}
 # this code makesa graph that shows the speceis whose presence is
 # most similar between the sexes
@@ -233,40 +258,7 @@ mf_in_common %>%
   ylab("Number of species found")
 
 ```
-
-
-
-I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were Solemya pervernicosa gill symbiont.
-
-```{r 86 percent identity}
-# this code finds samples with a percent identity between 85 snd 87,
-# then finds what species and how many of each have a percent
-# identity within this range
-joined_blast_data_metadata %>%
-  filter(pident > 85 & pident < 87) %>%
-  select(sscinames) %>%
-  group_by(sscinames) %>%
-  count() %>%
-  arrange(desc(n)) %>%
-  head(5) %>%
-  ggplot(aes(x = sscinames, y = n)) +
-  geom_bar(stat = "Identity") +
-  theme(axis.text.x = element_text(angle = 10, hjust = 1)) +
-  ggtitle("Most common species with 85-87% identity match") +
-  xlab("Species name") +
-  ylab("Number of sequences with 85-87% identity match")
-
-```
-
-
-```{r summary-table}
-# Finally, we'd like to be able to make a summary table of the counts of
-# sequences for each taxa for each sample. To do that we can use the table()
-# function. We add the kable() function as well (from the tidyr package)
-# in order to format the table nicely when the document is knitted
-kable(table(joined_blast_data_metadata$sscinames,
-            joined_blast_data_metadata$Run_s))
-```
+Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. I found that of these species, none was found more than 25 times on any one gender's hands.
 
 # Discussion
 
