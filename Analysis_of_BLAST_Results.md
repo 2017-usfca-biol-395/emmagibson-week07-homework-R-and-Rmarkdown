@@ -1,39 +1,63 @@
----
-title: "Analysis of BLAST Results"
-author: "Emma Gibson"
-date: "October 13, 2017"
-output: github_document
----
+Analysis of BLAST Results
+================
+Emma Gibson
+October 13, 2017
 
-# Introduction
+Introduction
+============
 
 As recent advancements in gene sequencing technology make studying microbiomes more and more accessible, studies of the human microbiomes have shown that they can vary widely from person to person. In this study, Fierer *et al.* focused on microbial communities living on peoples' skin. They were able to prove that microbes from a person's skin can remain on an object they have touched for up to two weeks, and sequences from these microbes can be used to accurately match which person has touched a given object. Whereas the original authors focused on using skin microbes for forensic analysis, I focused on investigating what these unique communities could tell me about the individuals they came from.
 
-# Methods
+Methods
+=======
 
-## Sample origin and sequencing
+Sample origin and sequencing
+----------------------------
 
-The original samples were obtained from human volunteers and the keyboards/mice they touched, and collected with sterilized cotton-tipped swab that had been moistened by a sterile solution. The hands were swabbed at midday, and the mice and keyboards were swabbed within 12 hours of being used by their respective owners. The sequences were obtained using high-throughput pyrosequencing of the 16S ribosomal gene. 
+The original samples were obtained from human volunteers and the keyboards/mice they touched, and collected with sterilized cotton-tipped swab that had been moistened by a sterile solution. The hands were swabbed at midday, and the mice and keyboards were swabbed within 12 hours of being used by their respective owners. The sequences were obtained using high-throughput pyrosequencing of the 16S ribosomal gene.
 
-## Computational
+Computational
+-------------
 
 The sequence data was analyzed using a combination of bash and R. First, the quality of each sequence was analyzed in bash using bioawk. After the sequences were revealed to be of good quality, a bash script was used to search the NCBI database for the closest species matches, and document the results. After the bash analysis, several R analyses were used to determine the relationships of the various species. The relationship of subject's sex to their skin microbes was of particular interest.
 
-# Results
+Results
+=======
+
 The following libraries were used:
-```{r load-libraries, message = FALSE}
+
+``` r
 # Be sure to install these packages before running this script
 # They can be installed either with the intall.packages() function
 # or with the 'Packages' pane in RStudio
 
 # load packages
 library("dplyr")
+```
+
+    ## Warning: package 'dplyr' was built under R version 3.4.2
+
+``` r
 library("tidyr")
+```
+
+    ## Warning: package 'tidyr' was built under R version 3.4.2
+
+``` r
 library("knitr")
+```
+
+    ## Warning: package 'knitr' was built under R version 3.4.2
+
+``` r
 library("ggplot2")
 ```
+
+    ## Warning: package 'ggplot2' was built under R version 3.4.2
+
 Then, the data was read in using the following code:
-```{r make-read-in-data-function}
+
+``` r
 # Output format from BLAST is as detailed on:
 # https://www.ncbi.nlm.nih.gov/books/NBK279675/
 # In this case, we used: '10 sscinames std'
@@ -79,7 +103,7 @@ read_blast_output <- function(filename) {
 }
 ```
 
-```{r read-in-BLAST-data}
+``` r
 # this makes a vector of all the BLAST output file names, including
 # the name(s) of the directories they are in
 files_to_read_in <- list.files(path = "output/blast",
@@ -100,7 +124,7 @@ for (filename in files_to_read_in) {
 }
 ```
 
-```{r read-in-metadata-and-join}
+``` r
 # Next we want to read in the metadata file so we can add that in too
 # This is not a csv file, so we have to use a slightly different syntax
 # here the `sep = "\t"` tells the function that the data are tab-delimited
@@ -121,8 +145,9 @@ joined_blast_data_metadata <- metadata_in %>%
             by = c("Run_s" = "sample_name"))
 ```
 
-####Figure 1. Percent identity in human hand-associated bacteria
-```{r histograms}
+#### Figure 1. Percent identity in human hand-associated bacteria
+
+``` r
 # Here we're using the dply piping syntax to select a subset of rows matching a
 # criteria we specify (using the filter) function, and then pull out a column
 # from the data to make a histogram. We don't need to tell the hist() function
@@ -134,10 +159,14 @@ joined_blast_data_metadata %>%
   hist(main = "Percent Identity",
        xlab = "Percent")
 ```
-Here, I analyzed what percent identity was most common for the BLAST results.
 
-####Figure 2. Most common species with ~86% identity match
-```{r 86 percent identity}
+    ## Warning: package 'bindrcpp' was built under R version 3.4.2
+
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/histograms-1.png) Here, I analyzed what percent identity was most common for the BLAST results.
+
+#### Figure 2. Most common species with ~86% identity match
+
+``` r
 # this code finds samples with a percent identity between 85 snd 87,
 # then finds what species and how many of each have a percent
 # identity within this range
@@ -155,10 +184,12 @@ joined_blast_data_metadata %>%
   xlab("Species name") +
   ylab("Number of sequences with 85-87% identity match")
 ```
-I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were *Solemya pervernicosa* gill symbiont.
 
-####Figure 3. Prominent species on female hands
-```{r female hands}
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/86%20percent%20identity-1.png) I found that there are a large number of sequences with around 86 percent identity. I decided to see if there was a certain species that was yielding many of these matches. After analyzing this, I found that over 2,000 of the 86% matches were *Solemya pervernicosa* gill symbiont.
+
+#### Figure 3. Prominent species on female hands
+
+``` r
 # this code identifies the most common species in female hands
 joined_blast_data_metadata %>%
   filter(env_material_s == "sebum" & sex_s == "female") %>%
@@ -173,10 +204,12 @@ joined_blast_data_metadata %>%
   xlab("Species name") +
   ylab("Number of Samples Found")
 ```
-After this, I decided to look at what the most common species was for female test subjects only.
 
-####Figure 4. Prominent species on male hands
-```{r male hands}
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/female%20hands-1.png) After this, I decided to look at what the most common species was for female test subjects only.
+
+#### Figure 4. Prominent species on male hands
+
+``` r
 # this code identifies the most common species in male hands
 joined_blast_data_metadata %>%
   filter(env_material_s == "sebum" & sex_s == "male") %>%
@@ -192,10 +225,12 @@ joined_blast_data_metadata %>%
   xlab("Species name") +
   ylab("Number of Sample Found")
 ```
-Next, I did the same for male hands, looking for the most prominent species.
 
-####Figure 5. Most prominent species in male and female hands
-```{r most common by sex}
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/male%20hands-1.png) Next, I did the same for male hands, looking for the most prominent species.
+
+#### Figure 5. Most prominent species in male and female hands
+
+``` r
 # this code ceates a graph to show the most common species among the sexes
 joined_blast_data_metadata %>%
   filter(env_material_s == "sebum") %>%
@@ -213,10 +248,12 @@ joined_blast_data_metadata %>%
   xlab("Species name") +
   ylab("Number of Sample Found")
 ```
-Next, I looked at what species were most prominent among each sex, and found there was little overlap between what was common to one and what was common to another.
 
-###Figure 6. Most prominent species with little differences between each sex
-```{r common between sexes}
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/most%20common%20by%20sex-1.png) Next, I looked at what species were most prominent among each sex, and found there was little overlap between what was common to one and what was common to another.
+
+### Figure 6. Most prominent species with little differences between each sex
+
+``` r
 # this code makesa graph that shows the speceis whose presence is
 # most similar between the sexes
 # these first lines create a factor that has only male and female BLAST results
@@ -262,7 +299,11 @@ mf_in_common %>%
   ggtitle("A. Most common species (by total) among male and female hands") +
   xlab("Species name") +
   ylab("Number of species found")
+```
 
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/common%20between%20sexes-1.png)
+
+``` r
 # also decided to make a third graph that determines the 30
 # most common species by percent makeup, rather than total abundance
 mf_in_common %>%
@@ -289,9 +330,11 @@ mf_in_common %>%
   xlab("Species name") +
   ylab("Number of species found")
 ```
-Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. Figure 6A determined the most prominent species using overall count in both sexes, whereas Figure 6B determined the most prominent species using the percent makeup each species has across both sexes. 
 
-# Discussion
+![](Analysis_of_BLAST_Results_files/figure-markdown_github-ascii_identifiers/common%20between%20sexes-2.png) Given that there are prominent differences in the species prominent on male hands versus female hands, I next decided to take a look at what prominent species had the smallest difference between male and female hands. Figure 6A determined the most prominent species using overall count in both sexes, whereas Figure 6B determined the most prominent species using the percent makeup each species has across both sexes.
+
+Discussion
+==========
 
 There appears to be a difference between the most prominent species in male and female hands. Strangely, the most prominent species on male hand was a gill symbiont of the clam species *Solemya permicosa*, which seems an odd thing to find on human hands. On female hands, the most common bacterium was *Bartonella washoensis*, a pathogen known to cause meningitis, which makes a little more sense. After seeing the great differences between male and female hands, I decided to look for what was the most similar between them. Most of these bacteria that were found in similar levels among the sexes were typical bacteria one might expect to see on a human hand, such as soil bacteria. However, what stands out about these bacteria is that there is significantly less of them than any of the major groups found in either sex. Even the most prominent of these has less than 80 individual present in both male and female hands. This reinforces the idea that the microbial communities on a person's hands are highly individualized, because the none of the species that are common among both sexes are very prominent overall.
 
